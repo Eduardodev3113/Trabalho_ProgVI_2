@@ -1,0 +1,145 @@
+COMPONENTES UTILIZADOS NO CHEFNOTE
+====================================
+
+PROJETO: ChefNote - Aplicativo de Receitas
+ALUNO: Eduardo Festugatto
+DATA: 27 de Maio de 2026
+
+=====================================
+COMPONENTES REACT NATIVE PAPER UTILIZADOS
+=====================================
+
+TELA 1: HomeScreen.js (Home)
+- Card: Container para cards de ação e receitas recentes
+- Title: Título principal da tela
+- Paragraph: Subtítulo e descrição
+- Button: Botões de ação (futuro)
+- FAB: Botão flutuante para adicionar nova receita
+- MaterialCommunityIcons: Ícones
+
+TELA 2: ReceitaListScreen.js (Receitas)
+- Searchbar: Campo de busca de receitas
+- Chip: Filtros por categoria
+- Card: Cards para exibir cada receita
+- FAB: Botão flutuante para adicionar receita
+- ActivityIndicator: Indicador de carregamento
+- FlatList (React Native): Lista com scroll
+
+TELA 3: ReceitaFormScreen.js (Formulário)
+- TextInput: Campos de entrada de texto (nome, tempo, ingredientes, modo de preparo)
+- SegmentedButtons: Seletor de categoria
+- Button: Botões de salvar/deletar
+- IconButton: Botão para remover ingredientes
+- Dialog: Dialog para confirmação de deleção
+- Portal: Container para o dialog
+- KeyboardAvoidingView (React Native): Evita teclado
+
+TELA 4: ReceitaDetailScreen.js (Detalhes)
+- Card: Container para detalhes
+- Button: Botões de editar e ir ao mapa
+- Chip: Badge de categoria
+- IconButton: Botão de edição
+- Divider: Separador entre ingredientes
+- ScrollView (React Native): Scroll vertical
+- MaterialCommunityIcons: Ícones
+
+TELA 5: MapaScreen.js (Mapa)
+- MapView: Mapa interativo (react-native-maps)
+- Marker: Marcadores no mapa (usuário, mercados, restaurantes)
+- Circle: Círculo de raio ao redor do usuário
+- Chip: Filtros para tipo de local
+- FAB: Botão para centralizar no usuário
+- ActivityIndicator: Indicador de carregamento
+
+TELA 6: ExplorarScreen.js (Explorar)
+- SegmentedButtons: Seletor de categorias
+- Card: Cards com receitas da API
+- Image (React Native): Imagens das receitas
+- Button: Botão para adicionar receita
+- FlatList (React Native): Lista em grid
+- ActivityIndicator: Indicador de carregamento
+- Snackbar: Notificação de sucesso/erro
+
+TELA 7: SobreScreen.js (Sobre)
+- Card: Cards com informações
+- Button: Botões de links úteis
+- Divider: Separadores
+- MaterialCommunityIcons: Ícones
+- ScrollView (React Native): Scroll vertical
+
+=====================================
+BIBLIOTECAS E DEPENDÊNCIAS
+=====================================
+
+- react-native-paper: Componentes UI
+- @react-navigation/native: Navegação base
+- @react-navigation/bottom-tabs: Navegação inferior
+- @react-navigation/stack: Navegação em pilha
+- firebase: Banco de dados Firestore
+- react-native-maps: Mapa com GPS
+- expo-location: Acesso ao GPS
+- @expo/vector-icons: Ícones
+
+=====================================
+BANCO DE DADOS
+=====================================
+
+Firebase Firestore
+Coleção: "receitas"
+Campos:
+- nome (string)
+- categoria (string)
+- tempoPreparo (number)
+- ingredientes (array)
+- modoPreparo (string)
+- criadoEm (timestamp)
+- foto (string - opcional)
+
+=====================================
+API EXTERNA (BÔNUS)
+=====================================
+
+TheMealDB API
+URL: https://www.themealdb.com/api/json/v1/1/filter.php?c=CATEGORIA
+Atributos utilizados:
+- strMeal: Nome da receita
+- strMealThumb: URL da imagem da receita
+- idMeal: ID único da receita
+
+=====================================
+RECURSOS NATIVOS
+=====================================
+
+1. GPS/Localização (expo-location)
+   - MapaScreen.js: Obtém coordenadas do usuário
+
+2. Mapa (react-native-maps)
+   - MapaScreen.js: Exibe mapa com marcadores
+
+3. Acesso a API Externa (fetch)
+   - ExplorarScreen.js: Consome dados do TheMealDB
+
+=====================================
+CORES E IDENTIDADE VISUAL
+=====================================
+
+- Primary: #E8692A (Laranja)
+- Secondary: #16A34A (Verde - Mercados)
+- Background: #FAFAF8 (Creme)
+- Surface: #F2F2F0 (Cinza suave)
+- Text: #1A1A1A (Preto)
+- Border Radius: 12px
+
+=====================================
+TOTAL DE COMPONENTES PAPER POR TELA
+=====================================
+
+HomeScreen: 5 componentes (Card, Title, Paragraph, Button, FAB)
+ReceitaListScreen: 6 componentes (Searchbar, Chip, Card, FAB, ActivityIndicator, FlatList)
+ReceitaFormScreen: 6 componentes (TextInput, SegmentedButtons, Button, IconButton, Dialog, Portal)
+ReceitaDetailScreen: 5 componentes (Card, Button, Chip, IconButton, Divider)
+MapaScreen: 5 componentes (MapView, Marker, Circle, Chip, FAB)
+ExplorarScreen: 6 componentes (SegmentedButtons, Card, Image, Button, FlatList, ActivityIndicator, Snackbar)
+SobreScreen: 4 componentes (Card, Button, Divider, MaterialCommunityIcons)
+
+TOTAL: 37+ componentes utilizado no projeto
