@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Text, FlatList } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, FlatList, Image } from 'react-native';
 import {
   Card,
   Searchbar,
@@ -45,7 +45,14 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   receitaCardContent: {
-    paddingVertical: 12,
+    padding: 12,
+  },
+  receitaImage: {
+    width: '100%',
+    height: 110,
+    backgroundColor: '#E8E8E6',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
   receitaHeader: {
     flexDirection: 'row',
@@ -213,6 +220,9 @@ export default function ReceitaListScreen({ navigation }) {
                 style={styles.receitaCard}
                 onPress={() => handleVerDetalhes(item)}
               >
+                {item.foto ? (
+                  <Image source={{ uri: item.foto }} style={styles.receitaImage} />
+                ) : null}
                 <View style={styles.receitaCardContent}>
                   <View style={styles.receitaHeader}>
                     <Text style={styles.receitaTitle} numberOfLines={2}>

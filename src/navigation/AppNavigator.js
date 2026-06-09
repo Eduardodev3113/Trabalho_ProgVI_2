@@ -8,7 +8,7 @@ import HomeScreen from '../screens/receitas/HomeScreen';
 import ReceitaListScreen from '../screens/receitas/ReceitaListScreen';
 import ReceitaDetailScreen from '../screens/receitas/ReceitaDetailScreen';
 import ReceitaFormScreen from '../screens/receitas/ReceitaFormScreen';
-// import MapaScreen from '../screens/receitas/MapaScreen'; // Mapas não funcionam bem no Snack
+import MapaScreen from '../screens/receitas/MapaScreen';
 import ExplorarScreen from '../screens/receitas/ExplorarScreen';
 import SobreScreen from '../screens/receitas/SobreScreen';
 
@@ -101,11 +101,11 @@ export default function AppNavigator() {
         component={ReceitasStack}
         options={{ title: 'Receitas' }}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Mapa"
         component={MapaScreen}
         options={{ title: 'Mapa' }}
-      /> */}
+      />
       <Tab.Screen
         name="Explorar"
         component={ExplorarScreen}

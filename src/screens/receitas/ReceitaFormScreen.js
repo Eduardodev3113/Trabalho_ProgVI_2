@@ -127,6 +127,7 @@ export default function ReceitaFormScreen({ route, navigation }) {
   const [ingredientes, setIngredientes] = useState(receita?.ingredientes || []);
   const [novoIngrediente, setNovoIngrediente] = useState('');
   const [modoPreparo, setModoPreparo] = useState(receita?.modoPreparo || '');
+  const [foto, setFoto] = useState(receita?.foto || '');
   const [loading, setLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -168,6 +169,7 @@ export default function ReceitaFormScreen({ route, navigation }) {
         tempoPreparo: parseInt(tempoPreparo),
         ingredientes,
         modoPreparo: modoPreparo.trim(),
+        foto: foto.trim() || null,
       };
 
       if (isEdicao) {
@@ -266,6 +268,17 @@ export default function ReceitaFormScreen({ route, navigation }) {
             mode="outlined"
             keyboardType="number-pad"
             placeholder="Ex: 30"
+            outlineColor="#F2F2F0"
+            activeOutlineColor="#E8692A"
+          />
+
+          <TextInput
+            label="URL da imagem (opcional)"
+            value={foto}
+            onChangeText={setFoto}
+            style={styles.textInput}
+            mode="outlined"
+            placeholder="https://..."
             outlineColor="#F2F2F0"
             activeOutlineColor="#E8692A"
           />

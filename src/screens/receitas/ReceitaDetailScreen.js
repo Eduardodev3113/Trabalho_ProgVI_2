@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, Alert } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, Image } from 'react-native';
 import {
   Card,
   Button,
@@ -65,6 +65,30 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 24,
+  },
+  imageContainer: {
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
+  },
+  heroImage: {
+    width: '100%',
+    height: 220,
+    backgroundColor: '#E8E8E6',
+  },
+  imagePlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F2F2F0',
+    borderRadius: 16,
+    height: 180,
+    marginBottom: 20,
+  },
+  imagePlaceholderText: {
+    color: '#4A4A4A',
+    marginTop: 8,
+    fontSize: 13,
   },
   sectionTitle: {
     fontSize: 16,
@@ -189,6 +213,23 @@ export default function ReceitaDetailScreen({ route, navigation }) {
 
         {/* Conteúdo */}
         <View style={styles.scrollContent}>
+          {receita.foto ? (
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: receita.foto }} style={styles.heroImage} />
+            </View>
+          ) : (
+            <View style={styles.imagePlaceholder}>
+              <MaterialCommunityIcons
+                name="image-outline"
+                size={36}
+                color="#B0B0AC"
+              />
+              <Text style={styles.imagePlaceholderText}>
+                Sem imagem cadastrada
+              </Text>
+            </View>
+          )}
+
           {/* Ingredientes */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>

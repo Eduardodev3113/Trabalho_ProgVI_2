@@ -1,84 +1,155 @@
-// Mock Firebase para desenvolvimento no Snack
-// Para produção, substitua com credenciais reais do Firebase
+import { initializeApp, getApps } from 'firebase/app';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD6oSebdA8fnBw5u7OUkto0HmP8amif2iQ",
+  authDomain: "prog-2026-eduardodallrosa.firebaseapp.com",
+  databaseURL: "https://prog-2026-eduardodallrosa-default-rtdb.firebaseio.com",
+  projectId: "prog-2026-eduardodallrosa",
+  storageBucket: "prog-2026-eduardodallrosa.firebasestorage.app",
+  messagingSenderId: "652979626230",
+  appId: "1:652979626230:web:46307d9ba3161bbb800cd7"
+};
 
 let mockDatabase = [];
 let listeners = [];
+let firestoreEnabled = false;
+let firestoreDb = null;
 
-// Mock functions que simulam Firebase
-export const salvarReceita = async (receita) => {
+const initializeFirebase = () => {
+  if (firestoreDb || !getApps().length) {
+    return;
+  }
+
+  const hasConfig = Boolean(firebaseConfig.projectId);
+
+  if (!hasConfig) {
+    firestoreEnabled = false;
+    return;
+  }
+
   try {
+    const app = initializeApp(firebaseConfig);
+    firestoreDb = getFirestore(app);
+    firestoreEnabled = true;
+  } catch (error) {
+    console.warn('Firebase não configurado, usando modo mock.', error);
+    firestoreEnabled = false;
+  }
+};
+
+initializeFirebase();
+
+const normalizeReceita = (docData, id) => ({
+  id,
+  ...docData,
+  criadoEm: docData?.criadoEm?.toDate?.()
+    ? docData.criadoEm.toDate()
+    : docData?.criadoEm || new Date(),
+});
+
+const notifyListeners = () => {
+  const sorted = [...mockDatabase].sort((a, b) => {
+    const dateA = a.criadoEm instanceof Date ? a.criadoEm : new Date(a.criadoEm);
+    const dateB = b.criadoEm instanceof Date ? b.criadoEm : new Date(b.criadoEm);
+    return dateB - dateA;
+  });
+
+  listeners.forEach((listener) => listener(sorted));
+};
+
+export const salvarReceita = async (receita) => {
+  if (!firestoreEnabled) {
     const novaReceita = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).slice(2, 11),
       ...receita,
       criadoEm: new Date(),
     };
     mockDatabase.push(novaReceita);
     notifyListeners();
     return novaReceita.id;
-  } catch (error) {
-    console.error('Erro ao salvar receita:', error);
-    throw error;
   }
+
+  const payload = {
+    ...receita,
+    criadoEm: serverTimestamp(),
+  };
+
+  const ref = await addDoc(collection(firestoreDb, 'receitas'), payload);
+  return ref.id;
 };
 
 export const listarReceitas = (callback) => {
-  // Retorna um unsubscribe function
-  const listener = callback;
-  listeners.push(listener);
+  if (!firestoreEnabled) {
+    const listener = callback;
+    listeners.push(listener);
 
-  // Chama imediatamente com dados atuais
-  const sorted = [...mockDatabase].sort(
-    (a, b) => new Date(b.criadoEm) - new Date(a.criadoEm)
-  );
-  callback(sorted);
+    const sorted = [...mockDatabase].sort((a, b) => {
+      const dateA = a.criadoEm instanceof Date ? a.criadoEm : new Date(a.criadoEm);
+      const dateB = b.criadoEm instanceof Date ? b.criadoEm : new Date(b.criadoEm);
+      return dateB - dateA;
+    });
 
-  // Retorna função para desinscrever
-  return () => {
-    listeners = listeners.filter((l) => l !== listener);
-  };
+    callback(sorted);
+
+    return () => {
+      listeners = listeners.filter((item) => item !== listener);
+    };
+  }
+
+  const q = query(collection(firestoreDb, 'receitas'), orderBy('criadoEm', 'desc'));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const dados = snapshot.docs.map((docItem) => normalizeReceita(docItem.data(), docItem.id));
+    callback(dados);
+  });
+
+  return unsubscribe;
 };
 
 export const buscarReceitaPorId = async (id) => {
-  try {
-    const receita = mockDatabase.find((r) => r.id === id);
-    return receita || null;
-  } catch (error) {
-    console.error('Erro ao buscar receita:', error);
-    throw error;
+  if (!firestoreEnabled) {
+    return mockDatabase.find((item) => item.id === id) || null;
   }
+
+  const snapshot = await getDoc(doc(firestoreDb, 'receitas', id));
+  return snapshot.exists() ? normalizeReceita(snapshot.data(), snapshot.id) : null;
 };
 
 export const atualizarReceita = async (id, receita) => {
-  try {
-    const index = mockDatabase.findIndex((r) => r.id === id);
+  if (!firestoreEnabled) {
+    const index = mockDatabase.findIndex((item) => item.id === id);
     if (index !== -1) {
       mockDatabase[index] = { ...mockDatabase[index], ...receita };
       notifyListeners();
     }
-  } catch (error) {
-    console.error('Erro ao atualizar receita:', error);
-    throw error;
+    return;
   }
+
+  await updateDoc(doc(firestoreDb, 'receitas', id), receita);
 };
 
 export const deletarReceita = async (id) => {
-  try {
-    mockDatabase = mockDatabase.filter((r) => r.id !== id);
+  if (!firestoreEnabled) {
+    mockDatabase = mockDatabase.filter((item) => item.id !== id);
     notifyListeners();
-  } catch (error) {
-    console.error('Erro ao deletar receita:', error);
-    throw error;
+    return;
   }
+
+  await deleteDoc(doc(firestoreDb, 'receitas', id));
 };
 
-// Função auxiliar para notificar listeners
-const notifyListeners = () => {
-  const sorted = [...mockDatabase].sort(
-    (a, b) => new Date(b.criadoEm) - new Date(a.criadoEm)
-  );
-  listeners.forEach((listener) => listener(sorted));
-};
-
-// Dummy objects para compatibilidade
-export const db = { mock: true };
-export const app = { mock: true };
+export const isFirebaseReady = () => firestoreEnabled;
+export const db = firestoreDb;
+export const app = firestoreDb || { mock: true };

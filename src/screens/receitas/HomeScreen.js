@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Text } from 'react-native';
-import { Card, Title, Paragraph, Button, FAB, useTheme } from 'react-native-paper';
+import { View, ScrollView, StyleSheet, Text, Image } from 'react-native';
+import { Card, Title, Paragraph, FAB } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { listarReceitas } from '../../config/firebase';
+import { listarReceitas, isFirebaseReady } from '../../config/firebase';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,6 +15,47 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 24,
+  },
+  heroCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginBottom: 20,
+    overflow: 'hidden',
+    elevation: 0,
+    borderWidth: 0,
+  },
+  heroImage: {
+    width: '100%',
+    height: 150,
+    backgroundColor: '#E8E8E6',
+  },
+  heroContent: {
+    padding: 16,
+  },
+  heroTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 6,
+  },
+  heroSubtitle: {
+    fontSize: 13,
+    color: '#4A4A4A',
+    lineHeight: 20,
+    marginBottom: 10,
+  },
+  statusBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#E8692A10',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    marginBottom: 10,
+  },
+  statusText: {
+    color: '#E8692A',
+    fontSize: 12,
+    fontWeight: '700',
   },
   headerTitle: {
     fontSize: 28,
@@ -76,7 +117,14 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   receitaCardContent: {
-    paddingVertical: 12,
+    padding: 12,
+  },
+  receitaImage: {
+    width: '100%',
+    height: 110,
+    backgroundColor: '#E8E8E6',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
   receitaTitle: {
     fontSize: 14,
@@ -108,11 +156,13 @@ const styles = StyleSheet.create({
 });
 
 export default function HomeScreen({ navigation }) {
-  const theme = useTheme();
   const [receitas, setReceitas] = useState([]);
   const [receitasRecentes, setReceitasRecentes] = useState([]);
+  const [firebaseStatus, setFirebaseStatus] = useState(isFirebaseReady());
 
   useEffect(() => {
+    setFirebaseStatus(isFirebaseReady());
+
     const unsubscribe = listarReceitas((dados) => {
       setReceitas(dados);
       setReceitasRecentes(dados.slice(0, 3));
@@ -131,13 +181,26 @@ export default function HomeScreen({ navigation }) {
         style={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <Title style={styles.headerTitle}>Bem-vindo ao ChefNote</Title>
-          <Paragraph style={styles.headerSubtitle}>
-            Organize suas receitas favoritas
-          </Paragraph>
-        </View>
+        <Card style={styles.heroCard}>
+          <Image
+            source={{
+              uri: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80',
+            }}
+            style={styles.heroImage}
+          />
+          <View style={styles.heroContent}>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>
+                {firebaseStatus ? 'Conectado ao Firebase' : 'Modo local'}
+              </Text>
+            </View>
+            <Title style={styles.heroTitle}>ChefNote</Title>
+            <Paragraph style={styles.heroSubtitle}>
+              Organize suas receitas, acompanhe as mais recentes e encontre
+              sugestões rápidas para cada momento.
+            </Paragraph>
+          </View>
+        </Card>
 
         {/* Cards de Ação */}
         <View style={styles.cardsContainer}>
@@ -215,6 +278,9 @@ export default function HomeScreen({ navigation }) {
                   })
                 }
               >
+                {receita.foto ? (
+                  <Image source={{ uri: receita.foto }} style={styles.receitaImage} />
+                ) : null}
                 <View style={styles.receitaCardContent}>
                   <Text style={styles.receitaTitle}>{receita.nome}</Text>
                   <Text style={styles.receitaMeta}>
